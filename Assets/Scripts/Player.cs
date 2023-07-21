@@ -4,21 +4,47 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject BodyPrefab;
+    public int bodyCount{get; private set;} = 0;
+    private GameObject[] bodies = new GameObject[100];
+
     private const float SPEED = 1.0f;
     private Rigidbody2D rb;
     private Vector2 moveDirection = Vector2.up;
     private Vector2 headDirection = Vector2.up;
     private Vector2 oldHeadDirection = Vector2.up;
 
+
+
+    public void extendBody()
+    {
+        GameObject body = Instantiate(BodyPrefab);
+        bodies[bodyCount] = body;
+
+        body.transform.position = this.transform.position;
+        body.transform.Translate(Vector3.down * bodyCount);
+
+        body.GetComponent<HingeJoint2D>().connectedBody = bodies[bodyCount-1].GetComponent<Rigidbody2D>();
+
+
+        bodyCount++;
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        bodies[0] = this.gameObject;
+        bodyCount=1;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            extendBody();
+        }
     }
 
     void FixedUpdate()
