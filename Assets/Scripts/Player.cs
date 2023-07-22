@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
         body.transform.position = this.transform.position;
         body.transform.Translate(Vector3.down * bodyCount);
 
-        body.GetComponent<HingeJoint2D>().connectedBody = bodies[bodyCount-1].GetComponent<Rigidbody2D>();
+        body.GetComponent<DistanceJoint2D>().connectedBody = bodies[bodyCount-1].GetComponent<Rigidbody2D>();
 
 
         bodyCount++;
