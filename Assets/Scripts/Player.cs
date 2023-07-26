@@ -80,4 +80,13 @@ public class Player : MonoBehaviour
         this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10);
         oldHeadDirection = headDirection;
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "FoodTag")
+        {
+            Destroy(other.gameObject);
+            extendBody();
+        }
+    }
 }
