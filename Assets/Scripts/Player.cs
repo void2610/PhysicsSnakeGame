@@ -15,7 +15,9 @@ public class Player : MonoBehaviour
     private Vector2 headDirection = Vector2.up;
     private Vector2 oldHeadDirection = Vector2.up;
 
-
+    private GameObject targetPlayer;
+    private float moveInterval = 2.0f;
+    private float moveTimer = 0.0f;
 
     public void extendBody()
     {
@@ -36,6 +38,8 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         bodies[0] = this.gameObject;
         bodyCount=1;
+
+        targetPlayer = GameObject.Find("Player");
     }
 
     // Update is called once per frame
@@ -50,35 +54,45 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         headDirection = Vector2.zero;
-        if(Input.GetKey(KeyCode.W))
-        {
-            moveDirection += Vector2.up;
-            headDirection += Vector2.up;
+        if(this.gameObject.name == "Player"){
+            if(Input.GetKey(KeyCode.W))
+            {
+                moveDirection += Vector2.up;
+                headDirection += Vector2.up;
+            }
+            if(Input.GetKey(KeyCode.S))
+            {
+                moveDirection += Vector2.down;
+                headDirection += Vector2.down;
+            }
+            if(Input.GetKey(KeyCode.A))
+            {
+                moveDirection += Vector2.left;
+                headDirection += Vector2.left;
+            }
+            if(Input.GetKey(KeyCode.D))
+            {
+                moveDirection += Vector2.right;
+                headDirection += Vector2.right;
+            }
+
+            if(headDirection.Equals(Vector2.zero))
+            {
+                headDirection = oldHeadDirection;
+            }
+
+            rb.velocity = moveDirection * SPEED;
+            Quaternion targetRotation = Quaternion.Euler(0, 0, Mathf.Atan2(headDirection.y, headDirection.x) * Mathf.Rad2Deg - 90);
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10);
+            oldHeadDirection = headDirection;
         }
-        if(Input.GetKey(KeyCode.S))
-        {
-            moveDirection += Vector2.down;
-            headDirection += Vector2.down;
-        }
-        if(Input.GetKey(KeyCode.A))
-        {
-            moveDirection += Vector2.left;
-            headDirection += Vector2.left;
-        }
-        if(Input.GetKey(KeyCode.D))
-        {
-            moveDirection += Vector2.right;
-            headDirection += Vector2.right;
+        else{
+            if(Time.time % 2 == 0)
+            {
+                rb.velocity = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)) * SPEED * 50;
+            }
         }
 
-        if(headDirection.Equals(Vector2.zero))
-        {
-            headDirection = oldHeadDirection;
-        }
-        rb.velocity = moveDirection * SPEED;
-        Quaternion targetRotation = Quaternion.Euler(0, 0, Mathf.Atan2(headDirection.y, headDirection.x) * Mathf.Rad2Deg - 90);
-        this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, Time.deltaTime * 10);
-        oldHeadDirection = headDirection;
     }
 
     void OnTriggerEnter2D(Collider2D other)
